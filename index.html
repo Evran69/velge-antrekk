@@ -750,3 +750,858 @@
       🇳🇴 Norsk oversettelse: AV
     </button>
     <button class="btn-top" id="btnCalm" onclick="toggleCalmMode()" title="Slå av/på tidsfrist">
+      🧘 Rolig: AV
+    </button>
+    <button class="btn-top" id="btnBoardMode" onclick="toggleBoardMode()" title="Storskjerm for læreren på tavlen">
+      👨‍🏫 Tavlemodus: AV
+    </button>
+    <button class="btn-top active" id="btnLabels" onclick="toggleLabels()" title="Vis/skjul franske merkelapper">
+      🏷️ Merkelapper: PÅ
+    </button>
+    <button class="btn-top" onclick="openGlossary()">
+      📖 Glosebok (Lyd)
+    </button>
+    <button class="btn-top active" id="btnSound" onclick="toggleSound()">
+      🔊 Lyd: PÅ
+    </button>
+    <button class="btn-top" onclick="showMenu()">
+      🏠 Meny
+    </button>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="screenMenu" class="screen active">
+    <div class="hero-card">
+      <h1 class="hero-title">Le Défilé de Mode du Lundi 🇫🇷</h1>
+      <p class="hero-sub">
+        Velg riktige klær og antrekk til ukens dager, værforhold og aktiviteter! Les eller lytt på fransk, unngå motefeller og bli ukens stilikon.
+      </p>
+
+      <h2 class="mode-section-title">🏆 Konkurransemoduser</h2>
+      <div class="mode-grid">
+        <div class="mode-card comp" onclick="startGame('rush')">
+          <div>
+            <span class="mode-badge badge-comp">🔥 Mest populær</span>
+            <h3>Morgenstresset</h3>
+            <p>Du har <strong>3 liv (❤️❤️❤️)</strong>. For hver dag krymper tiden, og værmeldingene blir vanskeligere. Hvor mange antrekk klarer du?</p>
+          </div>
+          <button class="mode-start-btn">Start Morgenstress ➔</button>
+        </div>
+
+        <div class="mode-card comp" onclick="startGame('sprint')">
+          <div>
+            <span class="mode-badge badge-comp">⚡ Fellesstart i klassen</span>
+            <h3>2-Minutters Moteshow</h3>
+            <p>Alle har nøyaktig <strong>120 sekunder</strong>! Kle på karakteren så mange riktige antrekk du klarer før tida renner ut.</p>
+          </div>
+          <button class="mode-start-btn">Start 2-Min Duell ➔</button>
+        </div>
+      </div>
+
+      <h2 class="mode-section-title">🎓 Treningsnivåer (Øv i eget tempo)</h2>
+      <div class="mode-grid">
+        <div class="mode-card" onclick="startGame('lvl1')">
+          <div>
+            <span class="mode-badge badge-lvl1">Nivå 1 • Enkelt vær</span>
+            <h3>Sol & Klasserom</h3>
+            <p>Enkle væruttrykk (sol, varme) og standard skoledager med tydelige klesvalg.</p>
+          </div>
+          <button class="mode-start-btn">Spill Nivå 1</button>
+        </div>
+
+        <div class="mode-card" onclick="startGame('lvl2')">
+          <div>
+            <span class="mode-badge badge-lvl2">Nivå 2 • Sport & Vær</span>
+            <h3>Regn, Kulde & Gym</h3>
+            <p>Krever egnet tøytøy til regnvær, vintertemperaturer og gymtimer.</p>
+          </div>
+          <button class="mode-start-btn">Spill Nivå 2</button>
+        </div>
+
+        <div class="mode-card" onclick="startGame('lvl3')">
+          <div>
+            <span class="mode-badge badge-lvl3">Nivå 3 • Motefeller</span>
+            <h3>Dresscode & Feller</h3>
+            <p>Krevende situasjoner med bursdagsselskap, tannlegebesøk og strenge kleskoder som utelukker visse plagg.</p>
+          </div>
+          <button class="mode-start-btn">Spill Nivå 3</button>
+        </div>
+      </div>
+
+      <div class="leaderboard-box">
+        <div class="leaderboard-header">
+          <h3 style="font-family: Georgia, serif; color: var(--fashion-purple);">🏅 Toppliste på denne maskinen</h3>
+          <button class="btn-clear" style="padding: 4px 10px; font-size: 0.78rem;" onclick="clearLeaderboard()">Nullstill liste</button>
+        </div>
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Navn</th>
+              <th>Modus</th>
+              <th>Poeng</th>
+              <th>Antrekk</th>
+              <th>Stilgrad</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenGame" class="screen">
+    <div class="hud">
+      <div class="hud-item">
+        <span class="hud-label" id="hudModeLabel">Modus</span>
+        <span class="hud-val" id="hudLives">❤️❤️❤️</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Poengsum</span>
+        <span class="hud-val" id="hudScore">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Mote-Euro</span>
+        <span class="hud-val" id="hudEuros">0 €</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Antrekk godkjent</span>
+        <span class="hud-val" id="hudOutfits">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Combo / Streak</span>
+        <span class="hud-val"><span class="streak-pill" id="hudStreak">🔥 x1</span></span>
+      </div>
+    </div>
+
+    <div class="teacher-panel" id="teacherPanel">
+      <h3 style="font-family:Georgia, serif; color:var(--fashion-purple); margin-bottom:6px;">👨‍🏫 Lærerpanel (Tavlemodus aktiv)</h3>
+      <p id="teacherGrammarHelp" style="font-size:0.92rem; color:#4b5563; margin-bottom:8px;"></p>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <button class="tab-btn" onclick="startGame('lvl1')">Bytt til Nivå 1</button>
+        <button class="tab-btn" onclick="startGame('lvl2')">Bytt til Nivå 2</button>
+        <button class="tab-btn" onclick="startGame('lvl3')">Bytt til Nivå 3</button>
+        <button class="btn-validate" style="flex:0; padding:6px 14px; font-size:0.85rem;" onclick="nextMission()">Neste utfordring ⏭️</button>
+      </div>
+    </div>
+
+    <div id="feedbackBanner" class="feedback-banner"></div>
+
+    <div class="mission-stage">
+      <div class="avatar-box">
+        <div class="avatar-emoji" id="avatarEmoji">👩‍🎓</div>
+        <div class="avatar-name" id="avatarName">Léa</div>
+      </div>
+      <div>
+        <div class="speech-bubble">
+          <div class="mission-french" id="missionText">« C'est lundi matin. Il fait beau et chaud. Je vais à l'école. Qu'est-ce que je mets ? »</div>
+          <div class="mission-no" id="missionNoText">« Det er mandag morgen. Det er fint og veldig varmt vær. Jeg skal på skole. Hva tar jeg på meg? »</div>
+          <div class="mission-controls">
+            <button class="btn-audio" onclick="speakMission(0.92)">🔊 Lytt på fransk</button>
+            <button class="btn-audio" onclick="speakMission(0.68)">🐢 Lytt sakte</button>
+          </div>
+          <div class="timer-wrap" id="timerWrap">
+            <div class="timer-bar" id="timerBar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace">
+      <div class="wardrobe-box">
+        <div class="box-title">
+          <span>👔 La Garde-robe (Klesskap)</span>
+          <span style="font-size: 0.8rem; color: #666;">Klikk på plagg</span>
+        </div>
+        <div class="category-tabs" id="categoryTabs">
+          <button class="tab-btn active" onclick="setCategory('all')">Alt</button>
+          <button class="tab-btn" onclick="setCategory('topp')">Topper</button>
+          <button class="tab-btn" onclick="setCategory('bunn')">Bunn</button>
+          <button class="tab-btn" onclick="setCategory('sko')">Sko</button>
+          <button class="tab-btn" onclick="setCategory('tilbehor')">Tilbehør</button>
+        </div>
+        <div class="items-grid" id="clothingGrid"></div>
+      </div>
+
+      <div class="mannequin-box">
+        <div class="box-title">
+          <span>🧍‍♂️ Mon Tenue (Antrekket ditt)</span>
+          <span id="outfitCount" style="font-size: 0.85rem; color: #666;">0 / 3 valgt</span>
+        </div>
+        <div class="mannequin-slots">
+          <div class="outfit-slot">
+            <span class="slot-label">👕 Haut (Topp):</span>
+            <div id="slotTopp" class="slot-empty" onclick="removeSlot('topp')">Ikke valgt</div>
+          </div>
+          <div class="outfit-slot">
+            <span class="slot-label">👖 Bas (Bunn):</span>
+            <div id="slotBunn" class="slot-empty" onclick="removeSlot('bunn')">Ikke valgt</div>
+          </div>
+          <div class="outfit-slot">
+            <span class="slot-label">👟 Chaussures (Sko):</span>
+            <div id="slotSko" class="slot-empty" onclick="removeSlot('sko')">Ikke valgt</div>
+          </div>
+          <div class="outfit-slot">
+            <span class="slot-label">🎒 Accessoire (Ekstra):</span>
+            <div id="slotTilbehor" class="slot-empty" onclick="removeSlot('tilbehor')">Valgfritt / Ingen</div>
+          </div>
+        </div>
+        <div class="outfit-actions">
+          <button class="btn-clear" onclick="clearOutfit()">🗑️ Tøm alt</button>
+          <button class="btn-validate" onclick="validateOutfit()">Valider antrekket ! ➔</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenEnd" class="screen">
+    <div class="diploma-card">
+      <div style="font-size: 2.8rem;">👗✨🏆</div>
+      <h2 class="diploma-header">Diplôme de Mode</h2>
+      <p id="endReasonText" style="color: #4b5563; font-weight: 600;">Défilé terminé ! Slik gjorde antrekkene det:</p>
+      <div class="diploma-rank" id="endRankBadge">Stylist Junior</div>
+
+      <div class="diploma-stats">
+        <div class="stat-tile">
+          <div class="hud-label">Total Poengsum</div>
+          <div class="num" id="endScore">0</div>
+        </div>
+        <div class="stat-tile">
+          <div class="hud-label">Mote-Euro</div>
+          <div class="num" id="endEuros">0 €</div>
+        </div>
+        <div class="stat-tile">
+          <div class="hud-label">Antrekk godkjent</div>
+          <div class="num" id="endOutfits">0</div>
+        </div>
+        <div class="stat-tile">
+          <div class="hud-label">Beste Streak</div>
+          <div class="num" id="endBestStreak">0</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+        <button class="btn-validate" style="max-width: 220px;" onclick="restartSameMode()">🔄 Spill igjen</button>
+        <button class="btn-clear" onclick="showMenu()">🏠 Til hovedmeny</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal-backdrop" id="glossaryModal">
+  <div class="modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h2 style="font-family: Georgia, serif; color: var(--fashion-purple);">📖 Glosebok (Klikk for fransk uttale)</h2>
+      <button class="btn-clear" onclick="closeGlossary()">✖ Lukk</button>
+    </div>
+    <p style="font-size:0.88rem; color:#555; margin-bottom:10px;">Klikk på en boks for å høre hvordan ordet uttales på fransk:</p>
+
+    <h4 style="margin-top:10px; color:var(--fashion-pink);">👕 Klesplagg</h4>
+    <div class="glossary-grid" id="glossaryClothing"></div>
+
+    <h4 style="margin-top:14px; color:var(--fashion-pink);">🌤️ Vær og situasjoner</h4>
+    <div class="glossary-grid" id="glossaryWeather"></div>
+  </div>
+</div>
+
+<script>
+  const CLOTHING_ITEMS = [
+    { id: 'tshirt', cat: 'topp', fr: 'un t-shirt blanc', no: 'en hvit t-skjorte', type: 'light', emoji: '👕' },
+    { id: 'chemise', cat: 'topp', fr: 'une chemise élégante', no: 'en fin skjorte', type: 'formal', emoji: '👔' },
+    { id: 'pull', cat: 'topp', fr: 'un pull chaud', no: 'en varm genser', type: 'warm', emoji: '🧶' },
+    { id: 'manteau', cat: 'topp', fr: "un manteau d'hiver", no: 'en vinterkåpe / jakke', type: 'winter', emoji: '🧥' },
+    { id: 'imper', cat: 'topp', fr: 'un imperméable', no: 'en regnjakke', type: 'rain', emoji: '🧥' },
+    { id: 'surv_haut', cat: 'topp', fr: 'un sweat de sport', no: 'en treningsgenser', type: 'sport', emoji: '🎽' },
+
+    { id: 'jean', cat: 'bunn', fr: 'un jean bleu', no: 'et blått par bukser / jean', type: 'casual', emoji: '👖' },
+    { id: 'short', cat: 'bunn', fr: 'un short léger', no: 'en lett shorts', type: 'light', emoji: '🩳' },
+    { id: 'pant_sport', cat: 'bunn', fr: 'un pantalon de survêtement', no: 'en treningsbukse', type: 'sport', emoji: '🏃' },
+    { id: 'jupe', cat: 'bunn', fr: 'une jupe élégante', no: 'et skjørt', type: 'formal', emoji: '👗' },
+    { id: 'pant_chaud', cat: 'bunn', fr: 'un pantalon chaud', no: 'en varm bukse', type: 'warm', emoji: '👖' },
+
+    { id: 'baskets', cat: 'sko', fr: 'des baskets confortables', no: 'sneakers / joggesko', type: 'sport', emoji: '👟' },
+    { id: 'bottes', cat: 'sko', fr: 'des bottes de pluie', no: 'gummistøvler', type: 'rain', emoji: '🥾' },
+    { id: 'chaussures_ville', cat: 'sko', fr: 'des chaussures élégantes', no: 'fint tøy / pensko', type: 'formal', emoji: '👞' },
+    { id: 'sandales', cat: 'sko', fr: "des sandales d'été", no: 'sandaler', type: 'light', emoji: '🩴' },
+
+    { id: 'bonnet', cat: 'tilbehor', fr: 'un bonnet chaud', no: 'en lue', type: 'winter', emoji: '🧢' },
+    { id: 'parapluie', cat: 'tilbehor', fr: 'un parapluie', no: 'en paraply', type: 'rain', emoji: '☂️' },
+    { id: 'lunettes_sol', cat: 'tilbehor', fr: 'des lunettes de soleil', no: 'solbriller', type: 'light', emoji: '🕶️' },
+    { id: 'echarpe', cat: 'tilbehor', fr: 'une écharpe en laine', no: 'et skjerf', type: 'warm', emoji: '🧣' }
+  ];
+
+  const WEATHER_PHRASES = [
+    { fr: 'Il fait beau et très chaud.', no: 'Det er fint og veldig varmt vær.', reqType: 'light', forbidType: ['winter', 'rain'] },
+    { fr: 'Il pleut abondamment dehors.', no: 'Det regner kraftig ute.', reqRain: true },
+    { fr: 'Il fait un froid glacial de canard.', no: 'Det er iskaldt ute (vinter).', reqType: 'winter' },
+    { fr: 'Nous avons un cours de sport aujourd\'hui.', no: 'Vi har gymtime i dag.', reqSport: true },
+    { fr: 'C\'est une journée normale à l\'école.', no: 'Det er en vanlig skoledag.', casualOk: true },
+    { fr: 'C\'est la fête d\'anniversaire formelle.', no: 'Det er selskapsbursdag.', reqFormal: true }
+  ];
+
+  const AVATARS = [
+    { name: 'Léa', emoji: '👩‍🎓' },
+    { name: 'Lucas', emoji: '🧑‍🎓' },
+    { name: 'Chloé', emoji: '👩‍💼' },
+    { name: 'Antoine', emoji: '🧔‍♂️' },
+    { name: 'Manon', emoji: '👱‍♀️' }
+  ];
+
+  let state = {
+    mode: 'rush',
+    score: 0,
+    euros: 0,
+    outfitsApproved: 0,
+    lives: 3,
+    streak: 1,
+    bestStreak: 1,
+    calmMode: false,
+    boardMode: false,
+    showLabels: true,
+    showTranslation: false,
+    soundEnabled: true,
+    currentCategory: 'all',
+    currentOutfit: { topp: null, bunn: null, sko: null, tilbehor: null },
+    currentMission: null,
+    timerMax: 35,
+    timerLeft: 35,
+    timerInterval: null,
+    sprintTimeLeft: 120,
+    firstTryOnCurrentMission: true
+  };
+
+  let audioCtx = null;
+  function playTone(type) {
+    if (!state.soundEnabled) return;
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'pop') {
+        osc.frequency.setValueAtTime(450, now);
+        osc.frequency.exponentialRampToValueAtTime(700, now + 0.08);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
+        osc.start(now);
+        osc.stop(now + 0.09);
+      } else if (type === 'success') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523, now);
+        osc.frequency.setValueAtTime(659, now + 0.1);
+        osc.frequency.setValueAtTime(784, now + 0.2);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc.start(now);
+        osc.stop(now + 0.45);
+      } else if (type === 'error') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(190, now);
+        osc.frequency.linearRampToValueAtTime(120, now + 0.25);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+        osc.start(now);
+        osc.stop(now + 0.28);
+      }
+    } catch (e) {}
+  }
+
+  function speakFrench(text, rate = 0.92) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'fr-FR';
+    utter.rate = rate;
+    const voices = window.speechSynthesis.getVoices();
+    const frVoice = voices.find(v => v.lang.toLowerCase().startsWith('fr'));
+    if (frVoice) utter.voice = frVoice;
+    window.speechSynthesis.speak(utter);
+  }
+
+  function speakMission(rate) {
+    if (state.currentMission) {
+      speakFrench(state.currentMission.text, rate);
+    }
+  }
+
+  function init() {
+    renderWardrobe();
+    buildGlossary();
+    renderLeaderboard();
+  }
+
+  function renderWardrobe() {
+    const grid = document.getElementById('clothingGrid');
+    grid.className = 'items-grid' + (state.showLabels ? '' : ' hide-labels');
+    
+    const filtered = state.currentCategory === 'all' 
+      ? CLOTHING_ITEMS 
+      : CLOTHING_ITEMS.filter(i => i.cat === state.currentCategory);
+
+    grid.innerHTML = filtered.map(item => `
+      <button class="clothing-btn" onclick="selectClothingItem('${item.id}')">
+        <span class="clothing-emoji">${item.emoji}</span>
+        <span class="clothing-name">${item.fr}</span>
+        <span class="clothing-cat">${item.cat}</span>
+      </button>
+    `).join('');
+  }
+
+  function setCategory(cat) {
+    state.currentCategory = cat;
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      if(btn.textContent.toLowerCase().includes(cat) || (cat==='all' && btn.textContent==='Alt')) {
+        btn.classList.add('active');
+      } else if(['Alt','Topper','Bunn','Sko','Tilbehør'].some(c => btn.textContent === c)) {
+        btn.classList.remove('active');
+      }
+    });
+    renderWardrobe();
+  }
+
+  function toggleTranslation() {
+    state.showTranslation = !state.showTranslation;
+    const btn = document.getElementById('btnTranslate');
+    btn.textContent = state.showTranslation ? '🇳🇴 Norsk oversettelse: PÅ' : '🇳🇴 Norsk oversettelse: AV';
+    btn.classList.toggle('active', state.showTranslation);
+    
+    const noTextEl = document.getElementById('missionNoText');
+    if (noTextEl) {
+      noTextEl.classList.toggle('show', state.showTranslation);
+    }
+  }
+
+  function toggleCalmMode() {
+    state.calmMode = !state.calmMode;
+    const btn = document.getElementById('btnCalm');
+    btn.textContent = state.calmMode ? '🧘 Rolig: PÅ' : '🧘 Rolig: AV';
+    btn.classList.toggle('active', state.calmMode);
+    document.getElementById('timerWrap').style.display = state.calmMode ? 'none' : 'block';
+  }
+
+  function toggleBoardMode() {
+    state.boardMode = !state.boardMode;
+    const btn = document.getElementById('btnBoardMode');
+    btn.textContent = state.boardMode ? '👨‍🏫 Tavle: PÅ' : '👨‍🏫 Tavle: AV';
+    btn.classList.toggle('active', state.boardMode);
+
+    const panel = document.getElementById('teacherPanel');
+    panel.classList.toggle('show', state.boardMode);
+
+    if (state.boardMode) {
+      if (!state.calmMode) toggleCalmMode();
+    }
+  }
+
+  function toggleLabels() {
+    state.showLabels = !state.showLabels;
+    const btn = document.getElementById('btnLabels');
+    btn.textContent = state.showLabels ? '🏷️ Merkelapper: PÅ' : '🏷️ Merkelapper: AV';
+    btn.classList.toggle('active', state.showLabels);
+    renderWardrobe();
+  }
+
+  function toggleSound() {
+    state.soundEnabled = !state.soundEnabled;
+    const btn = document.getElementById('btnSound');
+    btn.textContent = state.soundEnabled ? '🔊 Lyd: PÅ' : '🔇 Lyd: AV';
+    btn.classList.toggle('active', state.soundEnabled);
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function showMenu() {
+    clearInterval(state.timerInterval);
+    renderLeaderboard();
+    showScreen('screenMenu');
+  }
+
+  function restartSameMode() {
+    startGame(state.mode);
+  }
+
+  function startGame(mode) {
+    state.mode = mode;
+    state.score = 0;
+    state.euros = 0;
+    state.outfitsApproved = 0;
+    state.lives = 3;
+    state.streak = 1;
+    state.bestStreak = 1;
+    state.sprintTimeLeft = 120;
+    state.currentOutfit = { topp: null, bunn: null, sko: null, tilbehor: null };
+
+    if ((mode === 'rush' || mode === 'sprint') && state.calmMode && !state.boardMode) {
+      toggleCalmMode();
+    }
+
+    updateHUD();
+    showScreen('screenGame');
+    nextMission();
+
+    clearInterval(state.timerInterval);
+    state.timerInterval = setInterval(gameTick, 250);
+  }
+
+  function updateHUD() {
+    const modeLabel = document.getElementById('hudModeLabel');
+    const livesEl = document.getElementById('hudLives');
+
+    if (state.mode === 'rush') {
+      modeLabel.textContent = 'Liv igjen (Morgen)';
+      livesEl.textContent = '❤️'.repeat(Math.max(0, state.lives)) + '🖤'.repeat(Math.max(0, 3 - state.lives));
+    } else if (state.mode === 'sprint') {
+      modeLabel.textContent = 'Tid igjen (Duell)';
+      const mins = Math.floor(state.sprintTimeLeft / 60);
+      const secs = Math.floor(state.sprintTimeLeft % 60).toString().padStart(2, '0');
+      livesEl.textContent = `⏱️ ${mins}:${secs}`;
+    } else {
+      modeLabel.textContent = 'Treningsmodus';
+      livesEl.textContent = state.mode === 'lvl1' ? 'Nivå 1' : state.mode === 'lvl2' ? 'Nivå 2' : 'Nivå 3';
+    }
+
+    document.getElementById('hudScore').textContent = state.score;
+    document.getElementById('hudEuros').textContent = state.euros + ' €';
+    document.getElementById('hudOutfits').textContent = state.outfitsApproved;
+    document.getElementById('hudStreak').textContent = `🔥 x${state.streak}`;
+  }
+
+  function getEffectiveLevel() {
+    if (state.mode === 'lvl1') return 1;
+    if (state.mode === 'lvl2') return 2;
+    if (state.mode === 'lvl3') return 3;
+    if (state.mode === 'rush') {
+      if (state.outfitsApproved < 3) return 1;
+      if (state.outfitsApproved < 6) return 2;
+      return 3;
+    }
+    if (state.mode === 'sprint') {
+      if (state.outfitsApproved < 3) return 1;
+      if (state.outfitsApproved < 6) return 2;
+      return 3;
+    }
+    return 1;
+  }
+
+  function nextMission() {
+    hideFeedback();
+    state.currentOutfit = { topp: null, bunn: null, sko: null, tilbehor: null };
+    renderOutfitSlots();
+    state.firstTryOnCurrentMission = true;
+
+    const avatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
+    document.getElementById('avatarEmoji').textContent = avatar.emoji;
+    document.getElementById('avatarName').textContent = avatar.name;
+
+    const lvl = getEffectiveLevel();
+    let eligibleWeather = WEATHER_PHRASES;
+    if (lvl === 1) {
+      eligibleWeather = WEATHER_PHRASES.filter(w => w.reqType === 'light' || w.casualOk);
+    } else if (lvl === 2) {
+      eligibleWeather = WEATHER_PHRASES.filter(w => !w.reqFormal);
+    }
+
+    const weather = eligibleWeather[Math.floor(Math.random() * eligibleWeather.length)];
+    const days = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+    const day = days[Math.floor(Math.random() * days.length)];
+
+    const fullText = `C'est ${day} matin. ${weather.fr} Je m'habille pour sortir.`;
+    state.currentMission = {
+      ...weather,
+      text: fullText
+    };
+
+    document.getElementById('missionText').textContent = `« ${fullText} »`;
+    document.getElementById('missionNoText').textContent = `« Det er ${day === 'lundi' ? 'mandag' : day === 'mardi' ? 'tirsdag' : day === 'mercredi' ? 'onsdag' : day === 'jeudi' ? 'torsdag' : 'fredag'} morgen. ${weather.no} Jeg kler på meg for å gå ut. »`;
+    
+    document.getElementById('teacherGrammarHelp').innerHTML = `
+      <strong>Mål for antrekk:</strong> ${weather.no} (${weather.fr})<br>
+      <em>Tips for læreren:</em> Gå gjennom preposisjoner og klesplagg med klassen. Sjekk at hatten/skoene passer til været.
+    `;
+
+    if (state.mode === 'rush') {
+      state.timerMax = Math.max(12, 36 - state.outfitsApproved * 1.8);
+    } else {
+      state.timerMax = 35;
+    }
+    state.timerLeft = state.timerMax;
+    updateTimerBar();
+    playTone('pop');
+  }
+
+  function gameTick() {
+    if (document.getElementById('glossaryModal').classList.contains('show')) return;
+    if (state.boardMode) return;
+
+    if (state.mode === 'sprint') {
+      state.sprintTimeLeft -= 0.25;
+      updateHUD();
+      if (state.sprintTimeLeft <= 0) {
+        endGame('Tiden er ute! 2-minutters moteshow er ferdig.');
+        return;
+      }
+    }
+
+    if (!state.calmMode) {
+      state.timerLeft -= 0.25;
+      updateTimerBar();
+      if (state.timerLeft <= 0) {
+        handleMistake('⏰ Tiden gikk ut! Bussen kjørte uten deg (« En retard ! »).', true);
+      }
+    }
+  }
+
+  function updateTimerBar() {
+    const bar = document.getElementById('timerBar');
+    const pct = Math.max(0, (state.timerLeft / state.timerMax) * 100);
+    bar.style.width = pct + '%';
+    if (pct > 50) bar.style.backgroundColor = '#15803d';
+    else if (pct > 25) bar.style.backgroundColor = '#eab308';
+    else bar.style.backgroundColor = '#b91c1c';
+  }
+
+  function selectClothingItem(itemId) {
+    const item = CLOTHING_ITEMS.find(i => i.id === itemId);
+    if (!item) return;
+
+    if (item.cat === 'topp') state.currentOutfit.topp = item;
+    else if (item.cat === 'bunn') state.currentOutfit.bunn = item;
+    else if (item.cat === 'sko') state.currentOutfit.sko = item;
+    else if (item.cat === 'tilbehor') state.currentOutfit.tilbehor = item;
+
+    playTone('pop');
+    renderOutfitSlots();
+  }
+
+  function removeSlot(cat) {
+    state.currentOutfit[cat] = null;
+    playTone('pop');
+    renderOutfitSlots();
+  }
+
+  function clearOutfit() {
+    state.currentOutfit = { topp: null, bunn: null, sko: null, tilbehor: null };
+    renderOutfitSlots();
+  }
+
+  function renderOutfitSlots() {
+    const slots = ['topp', 'bunn', 'sko', 'tilbehor'];
+    let count = 0;
+
+    slots.forEach(cat => {
+      const item = state.currentOutfit[cat];
+      const slotEl = document.getElementById(`slot${cat.charAt(0).toUpperCase() + cat.slice(1)}`);
+      if (item) {
+        count++;
+        slotEl.className = 'slot-item';
+        slotEl.innerHTML = `<span>${item.emoji}</span> <span>${item.fr}</span> <span style="color:#b91c1c; font-size:0.8rem;">✖</span>`;
+      } else {
+        slotEl.className = 'slot-empty';
+        slotEl.textContent = cat === 'tilbehor' ? 'Valgfritt / Ingen' : 'Ikke valgt';
+      }
+    });
+
+    document.getElementById('outfitCount').textContent = `${count} / 3 valgt`;
+  }
+
+  function validateOutfit() {
+    const { topp, bunn, sko } = state.currentOutfit;
+    if (!topp || !bunn || !sko) {
+      showFeedback('Du må velge minst Topp, Bunn og Sko før du kan validere antrekket!', 'error');
+      playTone('error');
+      return;
+    }
+
+    const mission = state.currentMission;
+
+    if (mission.reqType === 'light') {
+      if (topp.type === 'winter' || topp.type === 'warm') {
+        handleMistake(`Feil! Det er varmt vær ("${mission.no}"). Du kan ikke ha på deg vinterklær som ${topp.fr}!`, false);
+        return;
+      }
+    }
+
+    if (mission.reqRain) {
+      const hasRainGear = topp.type === 'rain' || sko.type === 'rain' || (state.currentOutfit.tilbehor && state.currentOutfit.tilbehor.type === 'rain');
+      if (!hasRainGear) {
+        handleMistake(`Det regner ute ("${mission.no}")! Du mangler regnjakke (un imperméable), gummistøvler eller paraply.`, false);
+        return;
+      }
+    }
+
+    if (mission.reqType === 'winter') {
+      if (topp.type !== 'winter' && topp.type !== 'warm') {
+        handleMistake(`Det er iskaldt ute ("${mission.no}")! Du må ha på deg vinterkåpe eller varm genser.`, false);
+        return;
+      }
+    }
+
+    if (mission.reqSport) {
+      if (topp.type !== 'sport' && bunn.type !== 'sport' && sko.type !== 'sport') {
+        handleMistake(`Vi har gymtime i dag ("${mission.no}")! Du må ha på deg treningsklær og sneakers.`, false);
+        return;
+      }
+    }
+
+    if (mission.reqFormal) {
+      if (topp.type !== 'formal' && bunn.type !== 'formal') {
+        handleMistake(`Det er selskapsbursdag ("${mission.no}")! Du må kle deg fint i skjorte eller skjørt.`, false);
+        return;
+      }
+    }
+
+    playTone('success');
+    const speedBonus = Math.max(1, Math.round((state.timerLeft / state.timerMax) * 5));
+    const basePoints = 120 * state.streak;
+    const tipPoints = speedBonus * 10;
+    state.score += basePoints + tipPoints;
+    state.euros += 15 + (state.firstTryOnCurrentMission ? 5 : 0);
+    state.outfitsApproved += 1;
+
+    if (state.firstTryOnCurrentMission) {
+      state.streak = Math.min(5, state.streak + 1);
+      if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+    }
+
+    updateHUD();
+    showFeedback(`🎉 Parfait ! « Quelle belle tenue ! » Antrekket er godkjent (+${basePoints + tipPoints} poeng)`, 'success');
+    speakFrench('Parfait ! Magnifique tenue !');
+
+    setTimeout(() => {
+      nextMission();
+    }, 1100);
+  }
+
+  function handleMistake(msg, nextImmediately) {
+    playTone('error');
+    state.firstTryOnCurrentMission = false;
+    state.streak = 1;
+
+    if (state.mode === 'rush') {
+      state.lives -= 1;
+      updateHUD();
+      if (state.lives <= 0) {
+        endGame('Du gikk tom for liv i Morgenstresset!');
+        return;
+      }
+    } else {
+      updateHUD();
+    }
+
+    showFeedback(msg, 'error');
+    if (nextImmediately) {
+      setTimeout(() => nextMission(), 1300);
+    }
+  }
+
+  function showFeedback(msg, type) {
+    const b = document.getElementById('feedbackBanner');
+    b.className = `feedback-banner show ${type}`;
+    b.innerHTML = `<span>${msg}</span>`;
+  }
+
+  function hideFeedback() {
+    document.getElementById('feedbackBanner').className = 'feedback-banner';
+  }
+
+  function getFashionRank(score) {
+    if (score >= 1500) return '👑 Icône de la Mode à Paris';
+    if (score >= 1000) return '⭐⭐⭐ Stylist Senior';
+    if (score >= 600) return '⭐⭐ Créateur de Mode';
+    if (score >= 300) return '⭐ Stylist Junior';
+    return '🌱 Apprenti en Style';
+  }
+
+  function endGame(reasonText) {
+    clearInterval(state.timerInterval);
+
+    document.getElementById('endReasonText').textContent = reasonText;
+    document.getElementById('endScore').textContent = state.score;
+    document.getElementById('endEuros').textContent = state.euros + ' €';
+    document.getElementById('endOutfits').textContent = state.outfitsApproved;
+    document.getElementById('endBestStreak').textContent = 'x' + state.bestStreak;
+    document.getElementById('endRankBadge').textContent = getFashionRank(state.score);
+
+    showScreen('screenEnd');
+  }
+
+  function saveScore() {
+    const input = document.getElementById('playerNameInput');
+    const name = (input.value || 'Anonym Elev').trim();
+    const list = JSON.parse(localStorage.getItem('defileScores') || '[]');
+    const modeName = state.mode === 'rush' ? '🔥 Morgenstress' : state.mode === 'sprint' ? '⚡ 2-Min Moteshow' : state.mode.toUpperCase();
+
+    list.push({
+      name,
+      mode: modeName,
+      score: state.score,
+      outfits: state.outfitsApproved,
+      rank: getFashionRank(state.score)
+    });
+
+    list.sort((a, b) => b.score - a.score);
+    localStorage.setItem('defileScores', JSON.stringify(list.slice(0, 15)));
+    renderLeaderboard();
+  }
+
+  function renderLeaderboard() {
+    const tbody = document.getElementById('leaderboardBody');
+    const list = JSON.parse(localStorage.getItem('defileScores') || '[]');
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#888;">Ingen poengsummer lagret ennå. Spill en runde for å komme på pallen!</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = list.map((row, i) => `
+      <tr>
+        <td><strong>${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</strong></td>
+        <td><strong>${row.name}</strong></td>
+        <td>${row.mode}</td>
+        <td style="color:var(--fashion-pink); font-weight:800;">${row.score}</td>
+        <td>${row.outfits}</td>
+        <td>${row.rank}</td>
+      </tr>
+    `).join('');
+  }
+
+  function clearLeaderboard() {
+    localStorage.removeItem('defileScores');
+    renderLeaderboard();
+  }
+
+  function buildGlossary() {
+    document.getElementById('glossaryClothing').innerHTML = CLOTHING_ITEMS.map(item => `
+      <div class="glossary-item" onclick="speakFrench('${item.fr.replace(/'/g, "\\'")}')">
+        <span>${item.emoji} <strong>${item.fr}</strong><br><small style="color:#666;">${item.no}</small></span>
+        <span>🔊</span>
+      </div>
+    `).join('');
+
+    document.getElementById('glossaryWeather').innerHTML = WEATHER_PHRASES.map(w => `
+      <div class="glossary-item" onclick="speakFrench('${w.fr.replace(/'/g, "\\'")}')">
+        <span><strong>${w.fr}</strong><br><small style="color:#666;">${w.no}</small></span>
+        <span>🔊</span>
+      </div>
+    `).join('');
+  }
+
+  function openGlossary() {
+    document.getElementById('glossaryModal').classList.add('show');
+  }
+
+  function closeGlossary() {
+    document.getElementById('glossaryModal').classList.remove('show');
+  }
+
+  window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
